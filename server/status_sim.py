@@ -12,7 +12,7 @@ class JobStatusSimulator:
             time.sleep(step_delay)
             store[job_id] = {
                 "status": "pending",
-                "progress": ((i + 1) * 100) // total_steps
+                "progress": ((i + 1) * 100) // total_steps     # This is to send the progress in terms of percentage to help the user keep track of the progress.
             }
         
         store[job_id] = {"status": "completed", "progress": 100}

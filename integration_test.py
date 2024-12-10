@@ -3,7 +3,9 @@ import subprocess
 import sys
 import threading
 import time
+import uuid
 
+import requests
 from dotenv import load_dotenv
 
 from client.rest_client import RestClient
@@ -30,9 +32,9 @@ def test_rest_client():
     Integration test for the REST client.
     """
     client = RestClient(
-        base_url=f"http://{os.getenv("BASE_URL")}", api_key=os.getenv("API_KEY")
+        base_url=f"http://{os.getenv("BASE_URL")}:5000", api_key=os.getenv("API_KEY")
     )
-    job_id = "job123"
+    job_id = str(uuid.uuid4())
 
     print("Starting job...")
     client.start_job(job_id)
@@ -47,10 +49,29 @@ def test_websocket_client():
     """
     Integration test for the WebSocket client.
     """
-    client = WebSocketClient(
-        ws_url=f"ws://{os.getenv("BASE_URL")}/status", api_key=os.getenv("API_KEY")
-    )
+    ws_url = f"ws://{os.getenv('BASE_URL')}:5002"  # Base WebSocket URL
+    client = WebSocketClient(ws_url=ws_url, api_key=os.getenv("API_KEY"))
+
+    print("Connecting to WebSocket...")
     client.connect()
+
+    # Start the job via HTTP
+    job_id = str(uuid.uuid4())
+    print(f"Starting job with ID: {job_id}...")
+
+    response = requests.post(
+        f"http://{os.getenv('BASE_URL')}:5002/start_job",
+        json={"job_id": job_id},
+        headers={"Authorization": f"Bearer {os.getenv('API_KEY')}"},
+    )
+    if response.status_code == 202:
+        print(f"Job {job_id} started successfully.")
+    else:
+        print(f"Failed to start job. Error: {response.text}")
+        return
+
+    print("Listening for job updates...")
+    client.listen()
 
 
 if __name__ == "__main__":
