@@ -33,9 +33,9 @@ def verify_token(token):
 def get_status():
     job_id = request.args.get('job_id')
     if job_id in job_status_store:
-        return jsonify({"result": job_status_store[job_id]})
+        return jsonify({"status": job_status_store[job_id]})
     else:
-        return jsonify({"result": "error", "message": "Job ID not found"}), 404
+        return jsonify({"status": "error", "message": "Job ID not found"}), 404
 
 # The endpoint /start_job is used by the client to initialize and run the job. This creates a thread to simulate the processing of the video translation.
 @app.route("/start_job", methods=["POST"])
