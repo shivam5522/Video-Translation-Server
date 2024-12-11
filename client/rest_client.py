@@ -49,7 +49,7 @@ class RestClient:
 
             print(f"Job {job_id} status: {status}")
 
-            if status in {"completed", "error"}:
+            if status['status'] in {"completed", "error"}:
                 return status
 
             time.sleep(delay)

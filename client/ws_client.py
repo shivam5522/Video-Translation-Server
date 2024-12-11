@@ -1,3 +1,6 @@
+import uuid
+
+import requests
 import socketio
 
 
@@ -27,7 +30,7 @@ class WebSocketClient:
 
     def handle_status_update(self, data):
         print(f"Status update received for job {self.job_id}: {data}")
-        if data["status"]["status"] == "completed":
+        if data.get("status", {}).get("status") == "completed":
             self.sio.disconnect()
 
     def handle_disconnect(self):

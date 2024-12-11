@@ -59,6 +59,8 @@ def test_websocket_client():
     job_id = str(uuid.uuid4())
     print(f"Starting job with ID: {job_id}...")
 
+    client.subscribe_to_job(job_id)
+
     response = requests.post(
         f"http://{os.getenv('BASE_URL')}:5002/start_job",
         json={"job_id": job_id},
